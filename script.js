@@ -1,351 +1,327 @@
 // ===== VARIABLES GLOBALES =====
-let isBookOpen = false;
+let tasks = [];
+let currentFilter = 'all';
+const STORAGE_KEY = 'todoAppTasks';
 
-// ===== INICIALIZACIÓN =====
-document.addEventListener('DOMContentLoaded', () => {
-    initializeParticles();
-    attachEventListeners();
-});
-
-// ===== PARTÍCULAS DEL FONDO =====
-function initializeParticles() {
-    const particlesContainer = document.getElementById('particles');
-    const particleCount = window.innerWidth > 768 ? 30 : 15;
-
-    for (let i = 0; i < particleCount; i++) {
-        createFloatingParticle(particlesContainer);
-    }
-
-    // Crear nuevas partículas periódicamente
-    setInterval(() => {
-        if (particlesContainer.children.length < particleCount) {
-            createFloatingParticle(particlesContainer);
-        }
-    }, 3000);
-}
-
-function createFloatingParticle(container) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-
-    const dot = document.createElement('div');
-    dot.className = 'particle-dot';
-    particle.appendChild(dot);
-
-    const startX = Math.random() * window.innerWidth;
-    const startY = window.innerHeight;
-    const randomDelay = Math.random() * 5;
-
-    particle.style.left = startX + 'px';
-    particle.style.top = startY + 'px';
-    particle.style.animationDelay = randomDelay + 's';
-    particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-
-    container.appendChild(particle);
-
-    // Eliminar partículas cuando termina la animación
-    particle.addEventListener('animationend', () => {
-        particle.remove();
-    });
-}
+// ===== ELEMENTOS DEL DOM =====
+const taskInput = document.getElementById('taskInput');
+const addBtn = document.getElementById('addBtn');
+const taskList = document.getElementById('taskList');
+const emptyMessage = document.getElementById('emptyMessage');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+const clearAllBtn = document.getElementById('clearAllBtn');
+const exportBtn = document.getElementById('exportBtn');
+const totalCount = document.getElementById('totalCount');
+const completedCount = document.getElementById('completedCount');
+const pendingCount = document.getElementById('pendingCount');
+const progressPercent = document.getElementById('progressPercent');
+const progressBar = document.getElementById('progressBar');
+const confirmModal = document.getElementById('confirmModal');
+const confirmBtn = document.getElementById('confirmBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const confirmMessage = document.getElementById('confirmMessage');
 
 // ===== EVENT LISTENERS =====
-function attachEventListeners() {
-    const bookClosed = document.getElementById('bookClosed');
-    const goldenKey = document.getElementById('goldenKey');
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+    renderTasks();
+    updateStats();
+});
 
-    // Click en el libro
-    bookClosed.addEventListener('click', openBook);
+addBtn.addEventListener('click', addTask);
+taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask();
+});
 
-    // También permitir click en cualquier parte del contenedor del libro
-    document.getElementById('bookContainer').addEventListener('click', (e) => {
-        if (e.target.closest('#bookClosed') && !isBookOpen) {
-            openBook();
-        }
-    });
-
-    // Touch para móviles
-    bookClosed.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (!isBookOpen) {
-            openBook();
-        }
-    });
-}
-
-// ===== ANIMACIÓN DE APERTURA DEL LIBRO =====
-function openBook() {
-    if (isBookOpen) return;
-    isBookOpen = true;
-
-    const bookClosed = document.getElementById('bookClosed');
-    const bookOpen = document.getElementById('bookOpen');
-    const goldenKey = document.getElementById('goldenKey');
-
-    // 1. Llave desaparece
-    goldenKey.classList.add('disappear');
-
-    // 2. Crear explosión de partículas mágicas
-    setTimeout(() => {
-        createMagicBurst();
-    }, 200);
-
-    // 3. Libro se abre
-    setTimeout(() => {
-        bookClosed.style.opacity = '0';
-        bookClosed.style.pointerEvents = 'none';
-        bookOpen.classList.add('active');
-        
-        // Crear efecto de luz dorada
-        createGoldenFlash();
-        
-        // Crear partículas mágicas flotantes
-        createMagicalLeaves();
-    }, 800);
-}
-
-// ===== EXPLOSIÓN DE PARTÍCULAS MÁGICAS =====
-function createMagicBurst() {
-    const container = document.getElementById('magicParticles');
-    const bookContainer = document.getElementById('bookContainer');
-    const rect = bookContainer.getBoundingClientRect();
-    
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const particleCount = 20;
-
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'magic-particle burst-particle';
-
-        const spark = document.createElement('div');
-        spark.className = 'magic-spark';
-        particle.appendChild(spark);
-
-        // Ángulo aleatorio
-        const angle = (Math.PI * 2 * i) / particleCount;
-        const distance = 100 + Math.random() * 50;
-        const tx = Math.cos(angle) * distance;
-        const ty = Math.sin(angle) * distance;
-
-        particle.style.left = centerX + 'px';
-        particle.style.top = centerY + 'px';
-        particle.style.setProperty('--tx', tx + 'px');
-        particle.style.setProperty('--ty', ty + 'px');
-
-        container.appendChild(particle);
-
-        // Eliminar después de la animación
-        particle.addEventListener('animationend', () => {
-            particle.remove();
-        });
-    }
-}
-
-// ===== EFECTO DE LUZ DORADA =====
-function createGoldenFlash() {
-    const container = document.getElementById('magicParticles');
-    const flash = document.createElement('div');
-    
-    flash.style.position = 'absolute';
-    flash.style.left = '50%';
-    flash.style.top = '50%';
-    flash.style.width = '100px';
-    flash.style.height = '100px';
-    flash.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, transparent 70%)';
-    flash.style.transform = 'translate(-50%, -50%)';
-    flash.style.pointerEvents = 'none';
-    flash.style.animation = 'golden-flash 0.8s ease-out';
-
-    container.appendChild(flash);
-
-    // Agregar animación
-    const style = document.createElement('style');
-    if (!document.getElementById('golden-flash-style')) {
-        style.id = 'golden-flash-style';
-        style.textContent = `
-            @keyframes golden-flash {
-                0% {
-                    width: 100px;
-                    height: 100px;
-                    opacity: 1;
-                }
-                100% {
-                    width: 400px;
-                    height: 400px;
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    setTimeout(() => {
-        flash.remove();
-    }, 800);
-}
-
-// ===== HOJAS Y PARTÍCULAS MÁGICAS FLOTANTES =====
-function createMagicalLeaves() {
-    const container = document.getElementById('magicParticles');
-    const bookContainer = document.getElementById('bookContainer');
-    const rect = bookContainer.getBoundingClientRect();
-    
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const leafCount = 15;
-
-    for (let i = 0; i < leafCount; i++) {
-        setTimeout(() => {
-            const leaf = document.createElement('div');
-            leaf.className = 'magic-particle';
-
-            const spark = document.createElement('div');
-            spark.className = 'magic-spark';
-            leaf.appendChild(spark);
-
-            // Posición aleatoria
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 30 + Math.random() * 60;
-            const startX = centerX + Math.cos(angle) * distance;
-            const startY = centerY + Math.sin(angle) * distance;
-
-            leaf.style.left = startX + 'px';
-            leaf.style.top = startY + 'px';
-
-            // Movimiento aleatorio
-            const endAngle = Math.random() * Math.PI * 2;
-            const endDistance = 150 + Math.random() * 100;
-            const tx = Math.cos(endAngle) * endDistance;
-            const ty = Math.sin(endAngle) * endDistance;
-
-            leaf.style.setProperty('--tx', tx + 'px');
-            leaf.style.setProperty('--ty', ty + 'px');
-            leaf.style.animation = `magic-burst ${2 + Math.random() * 1.5}s ease-out forwards`;
-
-            container.appendChild(leaf);
-
-            leaf.addEventListener('animationend', () => {
-                leaf.remove();
-            });
-        }, i * 100);
-    }
-}
-
-// ===== MANEJO DE REDIMENSIONAMIENTO =====
-window.addEventListener('resize', () => {
-    // Recrear partículas si es necesario
-    const particlesContainer = document.getElementById('particles');
-    
-    if (window.innerWidth > 768 && particlesContainer.children.length < 30) {
-        for (let i = particlesContainer.children.length; i < 30; i++) {
-            createFloatingParticle(particlesContainer);
-        }
+clearCompletedBtn.addEventListener('click', () => {
+    if (tasks.some(t => t.completed)) {
+        showConfirmModal(
+            '¿Eliminar todas las tareas completadas?',
+            clearCompleted
+        );
+    } else {
+        alert('No hay tareas completadas para limpiar.');
     }
 });
 
-// ===== CONFETTI PERSONALIZADO (OPCIONAL) =====
-function createConfetti() {
-    const container = document.getElementById('magicParticles');
-    const confettiCount = 50;
-
-    for (let i = 0; i < confettiCount; i++) {
-        setTimeout(() => {
-            const confetti = document.createElement('div');
-            confetti.style.position = 'absolute';
-            confetti.style.width = '3px';
-            confetti.style.height = '3px';
-            confetti.style.background = ['#ffd700', '#d4af37', '#f5d5e8'][Math.floor(Math.random() * 3)];
-            confetti.style.borderRadius = '50%';
-            confetti.style.left = Math.random() * window.innerWidth + 'px';
-            confetti.style.top = '-10px';
-            confetti.style.pointerEvents = 'none';
-            confetti.style.boxShadow = '0 0 4px rgba(212, 175, 55, 0.6)';
-
-            container.appendChild(confetti);
-
-            let x = parseFloat(confetti.style.left);
-            let y = 0;
-            let vx = (Math.random() - 0.5) * 4;
-            let vy = 2 + Math.random() * 3;
-
-            function animate() {
-                x += vx;
-                y += vy;
-                vy += 0.1; // Gravedad
-
-                confetti.style.left = x + 'px';
-                confetti.style.top = y + 'px';
-
-                if (y < window.innerHeight) {
-                    requestAnimationFrame(animate);
-                } else {
-                    confetti.remove();
-                }
-            }
-
-            animate();
-        }, i * 20);
+clearAllBtn.addEventListener('click', () => {
+    if (tasks.length > 0) {
+        showConfirmModal(
+            '¿Eliminar TODAS las tareas? Esta acción no se puede deshacer.',
+            clearAll
+        );
+    } else {
+        alert('No hay tareas para eliminar.');
     }
-}
+});
 
-// ===== FUNCIONES ADICIONALES DE UTILIDAD =====
+exportBtn.addEventListener('click', exportTasks);
 
-// Función para configurar los detalles de la invitación
-function setInvitationDetails(options) {
-    const defaults = {
-        fecha: '[Tu fecha]',
-        hora: '[Tu hora]',
-        lugar: '[Tu lugar]',
-        contacto: '[Tu contacto]'
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        e.target.closest('.filter-btn').classList.add('active');
+        currentFilter = e.target.closest('.filter-btn').dataset.filter;
+        renderTasks();
+    });
+});
+
+cancelBtn.addEventListener('click', closeConfirmModal);
+confirmBtn.addEventListener('click', () => {
+    if (window.pendingAction) {
+        window.pendingAction();
+        closeConfirmModal();
+    }
+});
+
+// ===== FUNCIONES PRINCIPALES =====
+
+/**
+ * Agregar una nueva tarea
+ */
+function addTask() {
+    const text = taskInput.value.trim();
+    
+    if (!text) {
+        alert('Por favor, ingresa una tarea.');
+        taskInput.focus();
+        return;
+    }
+
+    const task = {
+        id: Date.now(),
+        text: text,
+        completed: false,
+        priority: 'medium',
+        date: new Date().toLocaleDateString('es-ES')
     };
 
-    const config = { ...defaults, ...options };
+    tasks.unshift(task);
+    taskInput.value = '';
+    taskInput.focus();
+    
+    saveTasks();
+    renderTasks();
+    updateStats();
+}
 
-    const details = document.querySelector('.details');
-    if (details) {
-        details.innerHTML = `
-            <p><strong>Fecha:</strong> ${config.fecha}</p>
-            <p><strong>Hora:</strong> ${config.hora}</p>
-            <p><strong>Lugar:</strong> ${config.lugar}</p>
-            ${config.contacto ? `<p><strong>Contacto:</strong> ${config.contacto}</p>` : ''}
-        `;
+/**
+ * Renderizar tareas en la interfaz
+ */
+function renderTasks() {
+    taskList.innerHTML = '';
+    
+    const filteredTasks = tasks.filter(task => {
+        if (currentFilter === 'completed') return task.completed;
+        if (currentFilter === 'active') return !task.completed;
+        return true;
+    });
+
+    if (filteredTasks.length === 0) {
+        emptyMessage.classList.remove('hidden');
+        return;
+    }
+
+    emptyMessage.classList.add('hidden');
+
+    filteredTasks.forEach(task => {
+        const taskEl = createTaskElement(task);
+        taskList.appendChild(taskEl);
+    });
+}
+
+/**
+ * Crear elemento de tarea
+ */
+function createTaskElement(task) {
+    const li = document.createElement('li');
+    li.className = `task-item ${task.completed ? 'completed' : ''}`;
+    li.dataset.id = task.id;
+
+    li.innerHTML = `
+        <input 
+            type="checkbox" 
+            class="task-checkbox" 
+            ${task.completed ? 'checked' : ''}
+            aria-label="Marcar tarea como completada"
+        >
+        <div class="task-content">
+            <div class="task-text">${escapeHtml(task.text)}</div>
+            <div class="task-date">${task.date}</div>
+        </div>
+        <span class="task-priority ${task.priority}">${task.priority}</span>
+        <div class="task-actions">
+            <button class="btn-task edit" title="Editar tarea" aria-label="Editar">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-task delete" title="Eliminar tarea" aria-label="Eliminar">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+
+    // Event listeners para la tarea
+    const checkbox = li.querySelector('.task-checkbox');
+    checkbox.addEventListener('change', () => toggleTask(task.id));
+
+    const editBtn = li.querySelector('.btn-task.edit');
+    editBtn.addEventListener('click', () => editTask(task.id));
+
+    const deleteBtn = li.querySelector('.btn-task.delete');
+    deleteBtn.addEventListener('click', () => {
+        showConfirmModal(
+            '¿Eliminar esta tarea?',
+            () => deleteTask(task.id)
+        );
+    });
+
+    return li;
+}
+
+/**
+ * Alternar estado completado de una tarea
+ */
+function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        saveTasks();
+        renderTasks();
+        updateStats();
     }
 }
 
-// Función para cambiar el nombre
-function setGuestName(name) {
-    const h1 = document.querySelector('.book-title h1');
-    if (h1) {
-        h1.textContent = name;
+/**
+ * Editar una tarea
+ */
+function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const newText = prompt('Editar tarea:', task.text);
+    
+    if (newText !== null && newText.trim()) {
+        task.text = newText.trim();
+        saveTasks();
+        renderTasks();
     }
 }
 
-// Función para manejar confirmación
-document.addEventListener('DOMContentLoaded', () => {
-    const confirmBtn = document.querySelector('.confirm-btn');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleConfirmation();
-        });
+/**
+ * Eliminar una tarea
+ */
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveTasks();
+    renderTasks();
+    updateStats();
+}
+
+/**
+ * Limpiar tareas completadas
+ */
+function clearCompleted() {
+    tasks = tasks.filter(t => !t.completed);
+    saveTasks();
+    renderTasks();
+    updateStats();
+}
+
+/**
+ * Eliminar todas las tareas
+ */
+function clearAll() {
+    tasks = [];
+    saveTasks();
+    renderTasks();
+    updateStats();
+}
+
+// ===== ALMACENAMIENTO LOCAL =====
+
+/**
+ * Guardar tareas en localStorage
+ */
+function saveTasks() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+/**
+ * Cargar tareas de localStorage
+ */
+function loadTasks() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    tasks = stored ? JSON.parse(stored) : [];
+}
+
+// ===== ESTADÍSTICAS =====
+
+/**
+ * Actualizar estadísticas
+ */
+function updateStats() {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    const pending = total - completed;
+    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+    totalCount.textContent = total;
+    completedCount.textContent = completed;
+    pendingCount.textContent = pending;
+    progressPercent.textContent = percentage + '%';
+    progressBar.style.width = percentage + '%';
+}
+
+// ===== EXPORTAR TAREAS =====
+
+/**
+ * Exportar tareas como JSON
+ */
+function exportTasks() {
+    const dataStr = JSON.stringify(tasks, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `tareas_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// ===== MODAL DE CONFIRMACIÓN =====
+
+/**
+ * Mostrar modal de confirmación
+ */
+function showConfirmModal(message, action) {
+    confirmMessage.textContent = message;
+    window.pendingAction = action;
+    confirmModal.classList.add('active');
+}
+
+/**
+ * Cerrar modal de confirmación
+ */
+function closeConfirmModal() {
+    confirmModal.classList.remove('active');
+    window.pendingAction = null;
+}
+
+// ===== UTILIDADES =====
+
+/**
+ * Escapar caracteres HTML para evitar XSS
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Cerrar modal al hacer clic fuera de él
+confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) {
+        closeConfirmModal();
     }
 });
-
-function handleConfirmation() {
-    // Crear efecto de celebración
-    createConfetti();
-    
-    // Aquí puedes agregar lógica para enviar confirmación
-    console.log('Asistencia confirmada');
-    
-    // Ejemplo: mostrar mensaje
-    alert('¡Gracias por confirmar tu asistencia! 🎉');
-}
-
-// ===== EXPORTAR FUNCIONES PARA USO EXTERNO =====
-window.setInvitationDetails = setInvitationDetails;
-window.setGuestName = setGuestName;
-window.handleConfirmation = handleConfirmation;
