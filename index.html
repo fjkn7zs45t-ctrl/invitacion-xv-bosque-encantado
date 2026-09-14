@@ -1,0 +1,288 @@
+index.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Massiel Berenice Mejía Ponce XV</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Georgia, serif;
+}
+
+body{
+background:linear-gradient(to bottom,#0d331f,#07140d);
+color:white;
+overflow-x:hidden;
+text-align:center;
+}
+
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.book{
+width:280px;
+height:380px;
+background:linear-gradient(145deg,#1d6136,#0f3d22);
+border:8px solid gold;
+border-radius:15px;
+position:relative;
+cursor:pointer;
+box-shadow:0 0 35px rgba(255,215,0,.6);
+transition:1.5s;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.book.open{
+transform:rotateY(-160deg);
+opacity:.2;
+}
+
+.book h1{
+font-size:26px;
+padding:20px;
+color:#ffd700;
+}
+
+.key{
+position:absolute;
+right:-90px;
+top:90px;
+font-size:65px;
+animation:float 2s infinite;
+transition:1s;
+}
+
+.tag{
+position:absolute;
+right:-120px;
+top:170px;
+background:#ffc0cb;
+color:#000;
+padding:12px;
+border-radius:10px;
+font-weight:bold;
+transition:1s;
+}
+
+.hide{
+opacity:0;
+transform:translateY(-100px);
+}
+
+@keyframes float{
+50%{
+transform:translateY(-10px);
+}
+}
+
+section{
+padding:80px 20px;
+}
+
+.card{
+background:rgba(255,255,255,.1);
+padding:20px;
+border-radius:20px;
+max-width:800px;
+margin:auto;
+backdrop-filter:blur(10px);
+}
+
+img{
+width:100%;
+max-width:500px;
+border-radius:20px;
+margin:20px 0;
+}
+
+button{
+padding:15px 30px;
+background:gold;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-size:18px;
+font-weight:bold;
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
+max-width:600px;
+margin:auto;
+}
+
+.day{
+padding:10px;
+background:rgba(255,255,255,.15);
+border-radius:10px;
+}
+
+.highlight{
+background:gold;
+color:black;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+
+<div class="book" id="book">
+<div class="key" id="key">🗝️</div>
+<div class="tag" id="tag">Toca para abrir</div>
+
+<h1>
+Massiel Berenice<br>
+Mejía Ponce<br>
+XV Años
+</h1>
+
+</div>
+
+</div>
+
+<section id="content" style="display:none">
+
+<div class="card">
+
+<h1>Mis XV Años</h1>
+
+<p>
+Te invito a celebrar conmigo este momento tan especial.
+</p>
+
+<img src="https://picsum.photos/600/800
+<h2>Fecha</h2>
+<p>17 de octubre de 2026</p>
+
+<h2>Hora</h2>
+<p>3:00 PM</p>
+
+<h2>Lugar</h2>
+
+<p>
+Colegio de Abogados de Honduras (CAH)<br>
+2.ª Avenida, carretera CA-5,<br>
+Colonia 15 de Septiembre,<br>
+frente al Aeropuerto Internacional Toncontín,
+Comayagüela, M.D.C.
+</p>
+
+<br>
+
+<a href="https://maps.app.goo.gl/1DLx69rvc68EY2U98?g_st=aw">
+<button>Ver Ubicación</button>
+</a>
+
+<br><br>
+
+<img src="https://picsum.photos/600/800?random=2">
+
+ción de Asistencia</h2>
+
+<p>
+Favor confirmar antes del
+<b>8 de octubre de 2026</b>
+</p>
+
+<br>
+
+<a href="https://wa.me/504949tton>Confirmar por WhatsApp</button>
+</a>
+
+<br><br>
+
+<h2>Octubre 2026</h2>
+
+<div class="calendar">
+
+<div class="day">L</div>
+<div class="day">M</div>
+<div class="day">M</div>
+<div class="day">J</div>
+<div class="day">V</div>
+<div class="day">S</div>
+<div class="day">D</div>
+
+<div class="day"></div>
+<div class="day"></div>
+<div class="day"></div>
+<div class="day">1</div>
+<div class="day">2</div>
+<div class="day">3</div>
+<div class="day">4</div>
+
+<div class="day">5</div>
+<div class="day">6</div>
+<div class="day">7</div>
+<div class="day highlight">8</div>
+<div class="day">9</div>
+<div class="day">10</div>
+<div class="day">11</div>
+
+<div class="day">12</div>
+<div class="day">13</div>
+<div class="day">14</div>
+<div class="day">15</div>
+<div class="day">16</div>
+<div class="day highlight">17</div>
+<div class="day">18</div>
+
+<div class="day">19</div>
+<div class="day">20</div>
+<div class="day">21</div>
+<div class="day">22</div>
+<div class="day">23</div>
+<div class="day">24</div>
+<div class="day">25</div>
+
+<div class="day">26</div>
+<div class="day">27</div>
+<div class="day">28</div>
+<div class="day">29</div>
+<div class="day">30</div>
+<div class="day">31</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+document.getElementById('book').addEventListener('click',()=>{
+
+document.getElementById('key').classList.add('hide');
+document.getElementById('tag').classList.add('hide');
+document.getElementById('book').classList.add('open');
+
+setTimeout(()=>{
+document.querySelector('.hero').style.display='none';
+document.getElementById('content').style.display='block';
+window.scrollTo(0,0);
+},1500);
+
+});
+
+</script>
+
+</body>
+</html>
